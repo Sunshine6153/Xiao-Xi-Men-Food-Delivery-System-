@@ -1,0 +1,42 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: sky-server
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/xiaoximen?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 010508
+  mybatis-plus:
+    mapper-locations: classpath:mapper/*.xml
+    configuration:
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+      map-underscore-to-camel-case: true
+    global-config:
+      db-config:
+        id-type: auto
+        logic-delete-field: isDeleted
+        logic-delete-value: 1
+        logic-not-delete-value: 0
+
+sky:
+  jwt:
+    admin-secret-key: sky123456sky123456sky123456sky123456
+    admin-ttl: 7200000
+    user-secret-key: sky123456sky123456sky123456sky123456
+    user-ttl: 7200000
+  alioss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    access-key-id: test
+    access-key-secret: test
+    bucket-name: test
+    base-path: /
+
+logging:
+  level:
+    com.sky: debug
+    org.mybatis: debug
