@@ -13,6 +13,7 @@ com/sky/exception/BaseException.class
 com/sky/json/LocalTimeSerializer.class
 com/sky/utils/PasswordUtil.class
 com/sky/exception/MerchantBusinessException.class
+com/sky/exception/AccountNotFoundException.class
 com/sky/constant/CuisineCategory.class
 com/sky/exception/AccountLockedException.class
 com/sky/json/LocalDateTimeSerializer.class
@@ -25,6 +26,7 @@ com/sky/exception/PhoneNumberAlreadyRegisteredException.class
 com/sky/utils/ValidateCodeUtils.class
 com/sky/utils/Md5Util.class
 com/sky/SkyCommonApplication.class
+com/sky/exception/PasswordErrorException.class
 com/sky/context/BaseContext.class
 com/sky/utils/PhoneNumberUtils.class
 com/sky/properties/JwtProperties.class

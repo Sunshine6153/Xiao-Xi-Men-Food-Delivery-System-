@@ -1,7 +1,9 @@
 package com.sky.dto;
 
 import java.io.Serializable;
+import lombok.Data;
 
+@Data
 //接受前端传输的商户登录数据
 public class MerchantLoginDTO implements Serializable {
 
@@ -37,21 +39,5 @@ public class MerchantLoginDTO implements Serializable {
         public MerchantLoginDTO build() {
             return new MerchantLoginDTO(username, password);
         }
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

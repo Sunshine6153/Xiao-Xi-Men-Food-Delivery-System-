@@ -1,9 +1,13 @@
 package com.sky.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
+@Data
 @TableName("merchant")
 public class Merchant implements Serializable {
 
@@ -13,36 +17,12 @@ public class Merchant implements Serializable {
     private String username;
     private String password;
     private String merchantName;
-    private String contactName;
     private String phone;
     private String location;
+    //不需要在DTO中显示
     private Integer status;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getMerchantName() {
-        return merchantName;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
 
     public static Builder builder() {
         return new Builder();
@@ -53,7 +33,10 @@ public class Merchant implements Serializable {
         private String password;
         private String merchantName;
         private String phone;
+        private String location;
         private Integer status;
+        private LocalDateTime createTime;
+        private LocalDateTime updateTime;
 
         public Builder username(String username) {
             this.username = username;
@@ -75,8 +58,21 @@ public class Merchant implements Serializable {
             return this;
         }
 
+        public Builder location(String location) {
+            this.location = location;
+            return this;
+        }
         public Builder status(Integer status) {
             this.status = status;
+            return this;
+        }
+
+        public Builder createTime(LocalDateTime date) {
+            this.createTime = date;
+            return this;
+        }
+        public Builder updateTime(LocalDateTime date) {
+            this.updateTime = date;
             return this;
         }
 
@@ -86,7 +82,10 @@ public class Merchant implements Serializable {
             merchant.password = password;
             merchant.merchantName = merchantName;
             merchant.phone = phone;
+            merchant.location = location;
             merchant.status = status;
+            merchant.createTime = createTime;
+            merchant.updateTime = updateTime;
             return merchant;
         }
     }

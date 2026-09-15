@@ -3,7 +3,6 @@ CREATE TABLE merchant (
   username VARCHAR(64) NOT NULL,
   password VARCHAR(128) NOT NULL,
   merchant_name VARCHAR(128) NOT NULL,
-  contact_name VARCHAR(64),
   phone VARCHAR(32),
   location VARCHAR(256),
   status TINYINT DEFAULT 1,
