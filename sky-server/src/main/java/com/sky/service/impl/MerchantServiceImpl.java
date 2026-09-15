@@ -1,6 +1,5 @@
 package com.sky.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sky.dto.MerchantDTO;
 import com.sky.dto.MerchantLoginDTO;
 import com.sky.entity.Merchant;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Service
 public class MerchantServiceImpl implements MerchantService {
