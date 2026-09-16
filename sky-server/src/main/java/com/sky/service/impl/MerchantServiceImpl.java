@@ -1,18 +1,25 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.PageInfo;
 import com.sky.dto.MerchantDTO;
 import com.sky.dto.MerchantLoginDTO;
+import com.sky.dto.MerchantPageQueryDTO;
 import com.sky.entity.Merchant;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.MerchantMapper;
+import com.sky.result.PageResult;
 import com.sky.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class MerchantServiceImpl implements MerchantService {
@@ -55,5 +62,30 @@ public class MerchantServiceImpl implements MerchantService {
                 .updateTime(LocalDateTime.now())
                 .build();
         merchantMapper.insert(merchant);
+    }
+
+    public PageResult page(MerchantPageQueryDTO merchantPageQueryDTO) {
+        int page = merchantPageQueryDTO.getPage() == null ? 1 : merchantPageQueryDTO.getPage();
+        int pageSize = merchantPageQueryDTO.getPageSize() == null ? 10 : merchantPageQueryDTO.getPageSize();
+        PageHelper.startPage(page, pageSize);
+
+        List<Merchant> merchantList = merchantMapper.pageQuery(merchantPageQueryDTO);
+        PageInfo<Merchant> pageInfo = new PageInfo<>(merchantList);
+        return new PageResult(pageInfo.getTotal(), pageInfo.getList());
+    }
+
+    public void startOrStop(Integer status, Long id) {
+        Merchant merchant = Merchant.builder().id(id).status(status).build();
+        merchantMapper.startOrStop(merchant);
+    }
+
+    public Merchant getById(Long id) {
+        Merchant merchant = merchantMapper.getById(id);
+        merchant.setPassword("********");
+        return merchant;
+    }
+
+    public void update(MerchantDTO merchantDTO) {
+        merchantMapper.update(merchantDTO);
     }
 }

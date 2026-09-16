@@ -3,8 +3,10 @@ package com.sky.controller.admin;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.MerchantDTO;
 import com.sky.dto.MerchantLoginDTO;
+import com.sky.dto.MerchantPageQueryDTO;
 import com.sky.entity.Merchant;
 import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.MerchantService;
 import com.sky.utils.JwtUtil;
@@ -13,10 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,12 +65,48 @@ public class MerchantController {
         return Result.success();
     }
 
-    @Operation(summary = "新增员工")
+    @Operation(summary = "新增商户")
     @SecurityRequirement(name = "token")//要求添加令牌
     @PostMapping("/save")
     public Result<String> save(@RequestBody MerchantDTO merchantDTO) {
         merchantService.save(merchantDTO);
-        log.info("新增员工：{}", merchantDTO);
+        log.info("新增商户：{}", merchantDTO);
+        return Result.success();
+    }
+
+    @Operation(summary = "商户分页查询")
+    @SecurityRequirement(name = "token")
+    @PostMapping("/page")
+    public Result<PageResult> page(MerchantPageQueryDTO merchantPageQueryDTO) {
+        log.info("商户分页查询：{}", merchantPageQueryDTO);
+        PageResult pageResult = merchantService.page(merchantPageQueryDTO);
+        return Result.success(pageResult);
+    }
+
+    @Operation(summary = "商户禁用")
+    @SecurityRequirement(name = "token")
+    @PostMapping("/status/{status}")
+    public Result<String> startOrStop(@PathVariable Integer status,
+                                      @RequestParam Long id) {
+        log.info("商户{}状态：{}", id, status);
+        merchantService.startOrStop(status, id);
+        return Result.success();
+    }
+
+    @Operation(summary = "商户单个查询")
+    @SecurityRequirement(name = "token")
+    @GetMapping("/{id}")
+    public Result<Merchant> getById(@PathVariable Long id) {
+        Merchant merchant = merchantService.getById(id);
+        return Result.success(merchant);
+    }
+
+    @Operation(summary = "商户更新")
+    @SecurityRequirement(name = "token")
+    @PostMapping("/update")
+    public Result<String> update(@RequestBody MerchantDTO merchantDTO) {
+        merchantService.update(merchantDTO);
+        log.info("商户更新：{}", merchantDTO);
         return Result.success();
     }
 }

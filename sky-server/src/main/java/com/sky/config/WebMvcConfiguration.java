@@ -1,6 +1,7 @@
 package com.sky.config;
 
 import com.sky.interceptor.JwtTokenAdminInterceptor;
+import com.sky.json.JacksonObjectMapper;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -12,6 +13,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
@@ -37,6 +39,11 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                         .addList("token"));
     }
 
+    @Bean
+    public JacksonObjectMapper jacksonObjectMapper() {
+        return new JacksonObjectMapper();
+    }
+
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(jwtTokenAdminInterceptor)
@@ -48,4 +55,5 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     public void addViewControllers(@NonNull ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("forward:/doc.html");
     }
+
 }

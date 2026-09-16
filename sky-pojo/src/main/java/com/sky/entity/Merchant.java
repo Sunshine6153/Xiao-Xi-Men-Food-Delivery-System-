@@ -29,6 +29,7 @@ public class Merchant implements Serializable {
     }
 
     public static class Builder {
+        private Long id;
         private String username;
         private String password;
         private String merchantName;
@@ -76,8 +77,13 @@ public class Merchant implements Serializable {
             return this;
         }
 
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
         public Merchant build() {
             Merchant merchant = new Merchant();
+            merchant.id = id;
             merchant.username = username;
             merchant.password = password;
             merchant.merchantName = merchantName;

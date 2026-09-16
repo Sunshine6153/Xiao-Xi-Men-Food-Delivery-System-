@@ -26,6 +26,7 @@ com/sky/dto/LoginDTO$LoginDTOBuilder.class
 com/sky/dto/OrdersDTO.class
 com/sky/entity/Setmeal$SetmealBuilder.class
 com/sky/vo/DishVO$DishVOBuilder.class
+com/sky/dto/MerchantPageQueryDTO.class
 com/sky/entity/SetmealDish.class
 com/sky/entity/Dish.class
 com/sky/entity/User$UserBuilder.class

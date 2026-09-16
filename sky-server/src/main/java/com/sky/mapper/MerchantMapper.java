@@ -1,10 +1,11 @@
 package com.sky.mapper;
 
+import com.sky.dto.MerchantDTO;
 import com.sky.entity.Merchant;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import com.sky.dto.MerchantPageQueryDTO;
+import java.util.List;
+
+import org.apache.ibatis.annotations.*;
 
 @SuppressWarnings("SqlResolve")
 @Mapper
@@ -26,4 +27,48 @@ public interface MerchantMapper {
          #{status}, #{createTime}, #{updateTime})
         """)
     void insert(Merchant merchant);
+
+    @Select("""
+            SELECT *
+        FROM merchant
+        WHERE (
+            :name IS NULL
+            OR :name = ''
+            OR merchant_name LIKE CONCAT('%', :name, '%')
+        )
+        ORDER BY create_time DESC;
+        """)
+    List<Merchant> list(MerchantPageQueryDTO query);
+
+    @Select("""
+        SELECT * FROM merchant
+        WHERE (
+            #{name} IS NULL
+            OR #{name} = ''
+            OR merchant_name LIKE CONCAT('%', #{name}, '%')
+        )
+        ORDER BY create_time DESC
+        """)
+    List<Merchant> pageQuery(MerchantPageQueryDTO merchantPageQueryDTO);
+
+    @Update("""
+        UPDATE merchant
+        SET status = #{status},
+            update_time = NOW()
+        WHERE id = #{id}
+        """)
+    void startOrStop(Merchant merchant);
+
+    @Select("SELECT * FROM merchant WHERE id = #{id}")
+    Merchant getById(Long id);
+
+    @Update("""
+        UPDATE merchant
+        SET username = #{username},
+            password = #{password},
+            merchant_name = #{merchantName},
+            phone = #{phone}
+        WHERE id = #{id}
+        """)
+    void update(MerchantDTO merchantDTO);
 }

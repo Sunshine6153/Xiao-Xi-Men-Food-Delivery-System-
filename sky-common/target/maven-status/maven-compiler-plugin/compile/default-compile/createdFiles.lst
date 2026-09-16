@@ -27,6 +27,7 @@ com/sky/utils/ValidateCodeUtils.class
 com/sky/utils/Md5Util.class
 com/sky/SkyCommonApplication.class
 com/sky/exception/PasswordErrorException.class
+com/sky/result/PageResult.class
 com/sky/context/BaseContext.class
 com/sky/utils/PhoneNumberUtils.class
 com/sky/properties/JwtProperties.class
