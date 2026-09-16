@@ -15,17 +15,22 @@ import com.sky.mapper.MerchantMapper;
 import com.sky.result.PageResult;
 import com.sky.service.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class MerchantServiceImpl implements MerchantService {
 
+    private static final String STATUS_KEY_PREFIX = "merchant_status:";
+
     @Autowired
     private MerchantMapper merchantMapper;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public Merchant login(MerchantLoginDTO merchantLoginDTO) {
@@ -43,7 +48,7 @@ public class MerchantServiceImpl implements MerchantService {
             throw new PasswordErrorException("密码错误");
         }
 
-        if (Integer.valueOf(0).equals(merchant.getStatus())) {
+        if (Integer.valueOf(0).equals(getStatus(merchant.getId()))) {
             throw new AccountLockedException("账号已被禁用");
         }
 
@@ -58,8 +63,6 @@ public class MerchantServiceImpl implements MerchantService {
                 .merchantName(merchantDTO.getMerchantName())
                 .phone(merchantDTO.getPhone())
                 .status(1)
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
                 .build();
         merchantMapper.insert(merchant);
     }
@@ -77,6 +80,25 @@ public class MerchantServiceImpl implements MerchantService {
     public void startOrStop(Integer status, Long id) {
         Merchant merchant = Merchant.builder().id(id).status(status).build();
         merchantMapper.startOrStop(merchant);
+        stringRedisTemplate.opsForValue().set(statusKey(id), status.toString());
+    }
+
+    @Override
+    public Integer getStatus(Long id) {
+        String cachedStatus = stringRedisTemplate.opsForValue().get(statusKey(id));
+        if (cachedStatus != null) {
+            return Integer.valueOf(cachedStatus);
+        }
+
+        Integer status = merchantMapper.getStatus(id);
+        if (status != null) {
+            stringRedisTemplate.opsForValue().set(statusKey(id), status.toString());
+        }
+        return status;
+    }
+
+    private String statusKey(Long id) {
+        return STATUS_KEY_PREFIX + id;
     }
 
     public Merchant getById(Long id) {
@@ -86,6 +108,14 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     public void update(MerchantDTO merchantDTO) {
-        merchantMapper.update(merchantDTO);
+        Merchant merchant = Merchant.builder()
+                .id(merchantDTO.getId())
+                .username(merchantDTO.getUsername())
+                .password(merchantDTO.getPassword())
+                .merchantName(merchantDTO.getMerchantName())
+                .phone(merchantDTO.getPhone())
+                .location(merchantDTO.getLocation())
+                .build();
+        merchantMapper.update(merchant);
     }
 }

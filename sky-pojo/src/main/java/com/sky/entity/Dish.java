@@ -23,16 +23,12 @@ public class Dish implements Serializable {
     private Long id;
 
     private Long categoryId;
+    private Long merchantId;
     private String name;
     private String image;
     private String description;
     private Integer status;
     private BigDecimal price;
-    private Integer copies;
-    private Integer sort;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
-    private String createUser;
-    private String updateUser;
-    private Integer isDeleted;
 }

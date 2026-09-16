@@ -1,8 +1,7 @@
 com/sky/utils/ExcelUtil.class
 com/sky/result/Result.class
+com/sky/utils/HttpClientUtils.class
 com/sky/json/LocalDateSerializer.class
-com/sky/enumeration/PayStatus.class
-com/sky/constant/Status.class
 com/sky/context/SpringContextUtil.class
 com/sky/constant/JwtClaimsConstant.class
 com/sky/exception/ShoppingCartBusinessException.class
@@ -19,9 +18,9 @@ com/sky/exception/AccountLockedException.class
 com/sky/json/LocalDateTimeSerializer.class
 com/sky/exception/CantDeleteException.class
 com/sky/exception/UserNotLoginException.class
-com/sky/enumeration/OrderStatus.class
 com/sky/properties/AliOssProperties.class
 com/sky/constant/Constant.class
+com/sky/enumeration/OperationType.class
 com/sky/exception/PhoneNumberAlreadyRegisteredException.class
 com/sky/utils/ValidateCodeUtils.class
 com/sky/utils/Md5Util.class

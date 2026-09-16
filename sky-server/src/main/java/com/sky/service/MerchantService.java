@@ -20,6 +20,8 @@ public interface MerchantService {
 
     void startOrStop(Integer status, Long id);
 
+    Integer getStatus(Long id);
+
     Merchant getById(Long id);
 
     void update(MerchantDTO merchantDTO);

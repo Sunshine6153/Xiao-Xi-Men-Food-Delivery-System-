@@ -1,9 +1,8 @@
-/Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/enumeration/PayStatus.java
+/Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/result/PageResult.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/json/LocalDateTimeSerializer.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/exception/PasswordErrorException.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/exception/MerchantBusinessException.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/utils/DateUtils.java
-/Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/enumeration/Status.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/context/BaseContext.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/exception/CantDeleteException.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/exception/AddressBookBusinessException.java
@@ -12,6 +11,7 @@
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/context/SpringContextUtil.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/utils/ExcelUtil.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/result/Result.java
+/Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/enumeration/OperationType.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/json/LocalDateSerializer.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/constant/Constant.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/SkyCommonApplication.java
@@ -19,10 +19,10 @@
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/properties/JwtProperties.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/utils/ValidateCodeUtils.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/exception/AccountLockedException.java
-/Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/enumeration/OrderStatus.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/properties/AliOssProperties.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/exception/BaseException.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/utils/PhoneNumberUtils.java
+/Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/json/JacksonObjectMapper.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/exception/AccountNotFoundException.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/exception/OrderBusinessException.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/sky/json/LocalTimeSerializer.java

@@ -2,6 +2,7 @@ package com.sky.config;
 
 import com.sky.interceptor.JwtTokenAdminInterceptor;
 import com.sky.json.JacksonObjectMapper;
+import com.sky.properties.LocalFileProperties;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -20,6 +21,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private JwtTokenAdminInterceptor jwtTokenAdminInterceptor;
+
+    @Autowired
+    private LocalFileProperties localFileProperties;
 
     @Bean
     public OpenAPI customOpenAPI() {
@@ -54,6 +58,16 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addViewControllers(@NonNull ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("forward:/doc.html");
+    }
+
+    @Override
+    public void addResourceHandlers(@NonNull org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
+        String location = localFileProperties.getImages();
+        if (!location.endsWith("/") && !location.endsWith("\\")) {
+            location += "/";
+        }
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:" + location);
     }
 
 }

@@ -34,6 +34,7 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             log.info("开始校验令牌：{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
             Long merchantId = Long.valueOf(claims.get(JwtClaimsConstant.MERCHANT_ID).toString());
+            request.setAttribute(JwtClaimsConstant.MERCHANT_ID, merchantId);
             log.info("登陆商户ID为：{}", merchantId);
             return true;
         } catch (ExpiredJwtException e) {

@@ -6,6 +6,12 @@ server:
 spring:
   application:
     name: sky-server
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 3000ms
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/xiaoximen?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
@@ -22,7 +28,6 @@ spring:
         logic-delete-field: isDeleted
         logic-delete-value: 1
         logic-not-delete-value: 0
-
 knife4j:
   enable: true
   setting:
@@ -38,6 +43,8 @@ springdoc:
   packages-to-scan: com.sky.controller
 
 sky:
+  path:
+    images: /Users/a123/Work/xiaoximen-img/
   jwt:
     admin-secret-key: sky123456sky123456sky123456sky123456
     admin-ttl: 7200000

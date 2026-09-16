@@ -1,10 +1,11 @@
 package com.sky.mapper;
 
-import com.sky.dto.MerchantDTO;
+import com.sky.annotation.AutoFill;
 import com.sky.entity.Merchant;
 import com.sky.dto.MerchantPageQueryDTO;
 import java.util.List;
 
+import com.sky.enumeration.OperationType;
 import org.apache.ibatis.annotations.*;
 
 @SuppressWarnings("SqlResolve")
@@ -26,6 +27,7 @@ public interface MerchantMapper {
         (#{username}, #{password}, #{merchantName}, #{phone},
          #{status}, #{createTime}, #{updateTime})
         """)
+    @AutoFill(value = OperationType.INSERT)
     void insert(Merchant merchant);
 
     @Select("""
@@ -54,10 +56,14 @@ public interface MerchantMapper {
     @Update("""
         UPDATE merchant
         SET status = #{status},
-            update_time = NOW()
+            update_time = #{updateTime}
         WHERE id = #{id}
         """)
+    @AutoFill(value = OperationType.UPDATE)
     void startOrStop(Merchant merchant);
+
+    @Select("SELECT status FROM merchant WHERE id = #{id}")
+    Integer getStatus(Long id);
 
     @Select("SELECT * FROM merchant WHERE id = #{id}")
     Merchant getById(Long id);
@@ -67,8 +73,10 @@ public interface MerchantMapper {
         SET username = #{username},
             password = #{password},
             merchant_name = #{merchantName},
-            phone = #{phone}
+            phone = #{phone},
+            update_time = #{updateTime}
         WHERE id = #{id}
         """)
-    void update(MerchantDTO merchantDTO);
+    @AutoFill(value = OperationType.UPDATE)
+    void update(Merchant merchant);
 }

@@ -109,4 +109,5 @@ public class MerchantController {
         log.info("商户更新：{}", merchantDTO);
         return Result.success();
     }
+
 }
