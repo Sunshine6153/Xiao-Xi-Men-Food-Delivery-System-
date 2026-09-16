@@ -21,12 +21,9 @@ public class Category implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    private Integer type;
     private String name;
     private Integer sort;
+    private Integer status;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
-    private String createUser;
-    private String updateUser;
-    private Integer isDeleted;
 }
