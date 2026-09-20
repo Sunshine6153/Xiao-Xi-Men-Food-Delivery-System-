@@ -44,6 +44,7 @@ CREATE TABLE dish_flavor (
 
 CREATE TABLE user (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  openid VARCHAR(64) UNIQUE,
   username VARCHAR(64) NOT NULL,
   password VARCHAR(128) NOT NULL,
   name VARCHAR(64),
