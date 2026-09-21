@@ -21,6 +21,7 @@ com/neu/exception/CantDeleteException.class
 com/neu/utils/DateUtils.class
 com/neu/constant/Constant.class
 com/neu/SkyCommonApplication.class
+com/neu/exception/InformationMissingException.class
 com/neu/exception/OrderBusinessException.class
 com/neu/context/SpringContextUtil.class
 com/neu/exception/PasswordErrorException.class

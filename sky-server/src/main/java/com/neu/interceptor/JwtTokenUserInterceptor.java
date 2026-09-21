@@ -1,6 +1,7 @@
 package com.neu.interceptor;
 
 import com.neu.constant.JwtClaimsConstant;
+import com.neu.context.BaseContext;
 import com.neu.exception.UserNotLoginException;
 import com.neu.properties.JwtProperties;
 import com.neu.utils.JwtUtil;
@@ -35,6 +36,7 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
             Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), token);
             Long userId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
             request.setAttribute(JwtClaimsConstant.USER_ID, userId);
+            BaseContext.setCurrentId(userId);
             log.info("登陆用户ID为：{}", userId);
             return true;
         } catch (ExpiredJwtException e) {
@@ -42,5 +44,11 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
         } catch (JwtException | IllegalArgumentException e) {
             throw new UserNotLoginException("登录凭证无效，请重新登录");
         }
+    }
+
+    @Override
+    public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+                                @NonNull Object handler, Exception ex) {
+        BaseContext.remove();
     }
 }

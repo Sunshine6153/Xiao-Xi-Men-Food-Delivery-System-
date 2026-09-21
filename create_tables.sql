@@ -82,19 +82,24 @@ CREATE TABLE orders (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   `number` VARCHAR(64) NOT NULL UNIQUE,
   user_id BIGINT NOT NULL,
-  status TINYINT DEFAULT 1,
+  delivery_user_id BIGINT,
+  status TINYINT NOT NULL DEFAULT 1,
   amount DECIMAL(10, 2) NOT NULL,
+  delivery_fee DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
   order_time DATETIME DEFAULT CURRENT_TIMESTAMP,
   checkout_time DATETIME,
-  pay_method VARCHAR(32),
-  pay_status TINYINT DEFAULT 0,
+  order_delivery_time DATETIME,
+  delivered_time DATETIME,
+  tableware_amount INT NOT NULL DEFAULT 0,
   consignee VARCHAR(64),
   phone VARCHAR(32),
   address VARCHAR(256),
   remark TEXT,
   create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
   update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES user(id)
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  FOREIGN KEY (delivery_user_id) REFERENCES user(id),
+  INDEX idx_orders_status (status)
 );
 
 CREATE TABLE order_detail (
@@ -107,7 +112,10 @@ CREATE TABLE order_detail (
   number INT NOT NULL,
   amount DECIMAL(10, 2) NOT NULL,
   image VARCHAR(256),
+  status TINYINT NOT NULL DEFAULT 1,
   create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+  update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (order_id) REFERENCES orders(id),
-  FOREIGN KEY (dish_id) REFERENCES dish(id)
+  FOREIGN KEY (dish_id) REFERENCES dish(id),
+  INDEX idx_order_detail_order_merchant (order_id, merchant_id)
 );
