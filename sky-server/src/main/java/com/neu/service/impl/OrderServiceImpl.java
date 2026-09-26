@@ -1,5 +1,6 @@
 package com.neu.service.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.neu.context.BaseContext;
 import com.neu.dto.OrderSubmitDTO;
 import com.neu.entity.AddressBook;
@@ -7,12 +8,15 @@ import com.neu.entity.Order;
 import com.neu.entity.OrderDetail;
 import com.neu.entity.ShoppingCart;
 import com.neu.exception.InformationMissingException;
+import com.neu.exception.OrderBusinessException;
 import com.neu.mapper.AddressBookMapper;
 import com.neu.mapper.OrderDetailMapper;
 import com.neu.mapper.OrderMapper;
 import com.neu.mapper.ShoppingCartMapper;
 import com.neu.service.OrderService;
 import com.neu.vo.OrderSubmitVO;
+import com.neu.vo.OrderPaymentVO;
+import com.neu.websocket.WebSocketServer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -37,6 +43,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ShoppingCartMapper shoppingCartMapper;
+
+    @Autowired
+    private WebSocketServer webSocketServer;
 
 
     @Transactional
@@ -86,5 +95,72 @@ public class OrderServiceImpl implements OrderService {
         orderSubmitVO.setOrderAmount(order.getAmount());
         orderSubmitVO.setOrderTime(order.getOrderTime());
         return orderSubmitVO;
+    }
+
+    @Transactional
+    public OrderPaymentVO paySuccess(String orderNumber) {
+        if (orderNumber == null || orderNumber.isBlank()) {
+            throw new InformationMissingException("订单号不能为空");
+        }
+
+        Long userId = BaseContext.getCurrentId();
+        // 根据订单号和用户Id查询订单
+        Order order = orderMapper.getByNumberAndUserId(orderNumber, userId);
+        if (order == null) {
+            throw new OrderBusinessException(404, "订单不存在");
+        }
+        if (order.getStatus() != 1) {
+            throw new OrderBusinessException(409, "订单当前状态不可支付");
+        }
+        LocalDateTime paymentTime = LocalDateTime.now();
+        Order orderUpdate = Order.builder().
+                id(order.getId())
+                .status(2)
+                .checkoutTime(paymentTime)
+                .build();
+        orderMapper.update(orderUpdate);
+
+        //通过websocket推送消息
+        Map<String, Object> message = new HashMap<>();
+        message.put("type", 1);
+        message.put("orderId", order.getId());
+        message.put("content", "订单支付成功"+orderNumber);
+        String json = JSON.toJSONString(message);
+        List<Long> merchantIds =
+                orderDetailMapper.getMerchantIdsByOrderId(order.getId());
+        for (Long merchantId : merchantIds) {
+            webSocketServer.sendToMerchant(merchantId, json);
+        }
+
+        //封装返回结果
+        OrderPaymentVO orderPaymentVO = new OrderPaymentVO();
+        orderPaymentVO.setEvent("ORDER_PAID");
+        orderPaymentVO.setOrderId(order.getId());
+        orderPaymentVO.setOrderNumber(order.getNumber());
+        orderPaymentVO.setStatus(2);
+        orderPaymentVO.setPaymentTime(paymentTime);
+        return orderPaymentVO;
+    }
+
+    public void reminder(Long orderId) {
+        Long userId = BaseContext.getCurrentId();
+        Order order = orderMapper.getById(orderId);
+        if (order == null) {
+            throw new OrderBusinessException(404, "订单不存在");
+        }
+        if (!order.getUserId().equals(userId)) {
+            throw new OrderBusinessException(403, "无权限");
+        }
+        Map message = new HashMap();
+        message.put("type", 2);
+        message.put("orderId", orderId);
+        message.put("content", "用户催单，请及时处理");
+        String json = JSON.toJSONString(message);
+        List<Long> merchantIds =
+                orderDetailMapper.getMerchantIdsByOrderId(orderId);
+
+        for (Long merchantId : merchantIds) {
+            webSocketServer.sendToMerchant(merchantId, json);
+        }
     }
 }

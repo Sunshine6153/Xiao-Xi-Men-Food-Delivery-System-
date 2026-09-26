@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.neu.dto.UserLoginDTO;
 import com.neu.entity.User;
+import com.neu.exception.AccountLockedException;
 import com.neu.exception.UserNotLoginException;
 import com.neu.mapper.UserMapper;
 import com.neu.properties.WeChatProperties;
@@ -46,6 +47,9 @@ public class UserServiceImpl implements UserService {
                     .status(1)
                     .build();
             userMapper.insertUser(user);
+        }
+        if (Integer.valueOf(0).equals(user.getStatus())) {
+            throw new AccountLockedException("账号已被禁用");
         }
         return user;
     }

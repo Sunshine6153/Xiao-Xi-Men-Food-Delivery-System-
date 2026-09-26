@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.neu.service.OrderService;
 @Slf4j
 @Tag(name = "用户端订单相关")
@@ -27,5 +24,12 @@ public class OrderController {
         log.info("用户下单：{}", orderSubmitDTO);
         OrderSubmitVO orderSubmitVO = orderService.SubmitOrder(orderSubmitDTO);
         return Result.success(orderSubmitVO);
+    }
+    @GetMapping("/reminder/{orderId}")
+    @Operation(summary = "用户点餐提醒")
+    public Result reminder(@PathVariable Long  orderId) {
+        orderService.reminder(orderId);
+        log.info("用户点餐提醒：{}", orderId);
+        return Result.success();
     }
 }

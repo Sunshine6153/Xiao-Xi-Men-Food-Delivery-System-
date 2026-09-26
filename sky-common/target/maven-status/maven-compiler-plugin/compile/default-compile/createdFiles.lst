@@ -31,6 +31,7 @@ com/neu/properties/JwtProperties.class
 com/neu/utils/Md5Util.class
 com/neu/exception/PhoneNumberAlreadyRegisteredException.class
 com/neu/json/JacksonObjectMapper.class
+com/neu/constant/AccountRole.class
 com/neu/exception/AccountNotFoundException.class
 com/neu/constant/JwtClaimsConstant.class
 com/neu/exception/ShoppingCartBusinessException.class

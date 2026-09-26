@@ -34,6 +34,14 @@ springdoc:
     path: /swagger-ui.html
   packages-to-scan: com.neu.controller
 
+sky:
+  websocket:
+    ticket-ttl: 30000
+    allowed-origin-patterns:
+      - http://localhost:*
+      - http://127.0.0.1:*
+      - https://servicewechat.com
+
 logging:
   level:
     com.neu: debug

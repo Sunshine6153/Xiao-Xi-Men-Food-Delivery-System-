@@ -3,6 +3,7 @@
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/neu/exception/CantDeleteException.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/neu/exception/AddressBookBusinessException.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/neu/utils/Md5Util.java
+/Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/neu/constant/AccountRole.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/neu/exception/BaseException.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/neu/utils/JwtUtil.java
 /Users/a123/Work/Spring/xiaoximen/sky-common/src/main/java/com/neu/context/BaseContext.java
