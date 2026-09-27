@@ -1,4 +1,0 @@
-# Sky Common Configuration
-spring:
-  main:
-    allow-bean-definition-overriding: true

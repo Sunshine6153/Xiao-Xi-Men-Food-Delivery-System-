@@ -40,10 +40,27 @@ public class ShoppingCartController {
         return Result.success(shoppingCartList);
     }
 
+    @RequestMapping("/update")
+    @Operation(summary = "修改购物车商品数量")
+    public Result<?> updateShoppingCart(@RequestBody ShoppingCartDTO shoppingCartDTO) {
+        log.info("修改购物车商品数量：{}", shoppingCartDTO);
+        shoppingCartService.updateShoppingCart(shoppingCartDTO);
+        return Result.success();
+    }
+
+    @RequestMapping("/deleteItem")
+    @Operation(summary = "删除购物车单项商品")
+    public Result<?> deleteShoppingCartItem(@RequestParam Long id) {
+        log.info("删除购物车单项商品：{}", id);
+        shoppingCartService.deleteShoppingCartItem(id);
+        return Result.success();
+    }
+
     @RequestMapping("/delete")
-    @Operation(summary = "删除购物车")
-    public void deleteShoppingCart(@RequestParam Long userId) {
-        log.info("删除购物车");
-        shoppingCartService.deleteShoppingCartByUserId(userId);
+    @Operation(summary = "清空购物车")
+    public Result<?> deleteShoppingCart() {
+        log.info("清空购物车");
+        shoppingCartService.deleteShoppingCart();
+        return Result.success();
     }
 }

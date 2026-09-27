@@ -1,0 +1,36 @@
+<view class="page-shell inner-page">
+  <view class="inner-header">
+    <view><view class="eyebrow blue">顺路就帮一把</view><view class="inner-title">帮带</view><view class="inner-subtitle">选一笔方便的订单，帮同学带回去</view></view>
+    <view class="header-badge">校园<br/>互助</view>
+  </view>
+  <view class="tip-card"><text class="tip-icon">↗</text><view><text class="tip-title">学生自主帮带</text><text class="tip-text">没有强制派单，选你方便的订单就好</text></view></view>
+  <view class="delivery-switch">
+    <view class="delivery-tab {{tab === 'available' ? 'delivery-tab-active' : ''}}" data-tab="available" bindtap="switchTab">待接订单</view>
+    <view class="delivery-tab {{tab === 'mine' ? 'delivery-tab-active' : ''}}" data-tab="mine" bindtap="switchTab">我的帮带</view>
+  </view>
+  <view wx:if="{{loading}}" class="delivery-empty"><text class="empty-icon">◌</text><text>正在加载订单...</text></view>
+  <view wx:elif="{{errorMessage}}" class="delivery-empty">
+    <text class="empty-title">{{errorMessage}}</text>
+    <button class="outline-button" data-tab="{{tab}}" bindtap="switchTab">重新加载</button><button class="outline-button" bindtap="login">微信登录</button>
+  </view>
+  <block wx:elif="{{orders.length}}">
+    <view class="delivery-list">
+      <view wx:for="{{orders}}" wx:key="id" class="delivery-card" data-id="{{item.id}}" bindtap="openDetail">
+        <view class="delivery-top"><view><text class="delivery-label">送到</text><text class="delivery-address">{{item.address}}</text></view><text class="fee">帮带 ¥{{item.fee}}</text></view>
+        <view class="food-summary">{{item.summary}}</view>
+        <view class="delivery-meta">
+          <text>{{item.createdAt || '刚刚'}}</text><text>{{item.merchantCount}} 个摊位</text>
+          <button wx:if="{{tab === 'available'}}" class="outline-button" catchtap="openDetail" data-id="{{item.id}}">查看详情</button>
+          <text wx:else class="mine-status">{{item.status}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+  <view wx:else class="delivery-empty"><text class="empty-icon">⇢</text><text class="empty-title">{{tab === 'available' ? '暂时没有待接订单' : '还没有帮带记录'}}</text><text class="empty-copy">{{tab === 'available' ? '晚一点再来看看吧' : '接一笔顺路订单，帮助同学也赚点帮带费'}}</text></view>
+  <view wx:if="{{orders.length}}" class="list-footer"><text wx:if="{{moreError}}">{{moreError}}</text><button wx:if="{{hasMore}}" disabled="{{loadingMore}}" bindtap="loadMore">{{loadingMore ? '正在加载...' : '加载更多'}}</button><text wx:else>已经到底了</text></view><view class="tabbar safe-bottom">
+    <view class="tabbar-item" bindtap="goHome"><text class="tab-icon">⌂</text><text>点餐</text></view>
+    <view class="tabbar-item active"><text class="tab-icon">⇢</text><text>帮带</text></view>
+    <view class="tabbar-item" bindtap="goOrders"><text class="tab-icon">▤</text><text>订单</text></view>
+    <view class="tabbar-item" bindtap="goMine"><text class="tab-icon">◯</text><text>我的</text></view>
+  </view>
+</view>

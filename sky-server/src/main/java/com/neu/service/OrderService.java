@@ -10,4 +10,8 @@ public interface OrderService {
    OrderPaymentVO paySuccess(String orderNumber);
 
     void reminder(Long orderId);
+
+    void cancel(Long orderId);
+
+    void confirmReceipt(Long orderId);
 }

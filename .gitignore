@@ -1,0 +1,15 @@
+**/target/
+**/node_modules/
+**/dist/
+**/.idea/
+*.iml
+.DS_Store
+*.log
+**/local-data-backups/
+**/application-dev.yml
+**/application-local.yml
+**/project.private.config.json
+**/.env.local
+**/.env.*.local
+*.pem
+*.key

@@ -14,6 +14,7 @@ import com.neu.mapper.OrderDetailMapper;
 import com.neu.mapper.OrderMapper;
 import com.neu.mapper.ShoppingCartMapper;
 import com.neu.service.OrderService;
+import com.neu.service.OrderNotificationService;
 import com.neu.vo.OrderSubmitVO;
 import com.neu.vo.OrderPaymentVO;
 import com.neu.websocket.WebSocketServer;
@@ -47,11 +48,16 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private WebSocketServer webSocketServer;
 
+    @Autowired
+    private OrderNotificationService orderNotificationService;
+
 
     @Transactional
     public OrderSubmitVO SubmitOrder(OrderSubmitDTO orderSubmitDTO) {
         //检查有无异常
-        AddressBook addressBook = addressBookMapper.getById(orderSubmitDTO.getAddressId());
+        AddressBook addressBook = addressBookMapper.getByIdAndUserId(
+                orderSubmitDTO.getAddressId(), BaseContext.getCurrentId()
+        );
         if(addressBook == null){
             throw new InformationMissingException("地址不存在");
         }
@@ -59,13 +65,32 @@ public class OrderServiceImpl implements OrderService {
         if(shoppingCarts == null || shoppingCarts.size() == 0){
             throw new InformationMissingException("购物车为空");
         }
+        if (shoppingCartMapper.countUnavailableByUserId(BaseContext.getCurrentId()) > 0) {
+            throw new OrderBusinessException(409, "购物车中存在已下架菜品或暂停营业的商户");
+        }
+        BigDecimal deliveryFee = orderSubmitDTO.getDeliveryFee() == null
+                ? BigDecimal.ZERO : orderSubmitDTO.getDeliveryFee();
+        if (deliveryFee.compareTo(BigDecimal.ZERO) < 0) {
+            throw new OrderBusinessException(400, "配送费不能小于0");
+        }
+        BigDecimal dishAmount = BigDecimal.ZERO;
+        for (ShoppingCart shoppingCart : shoppingCarts) {
+            if (shoppingCart.getNumber() == null || shoppingCart.getNumber() <= 0
+                    || shoppingCart.getPrice() == null
+                    || shoppingCart.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+                throw new OrderBusinessException(409, "购物车商品数量或价格无效");
+            }
+            dishAmount = dishAmount.add(
+                    shoppingCart.getPrice().multiply(BigDecimal.valueOf(shoppingCart.getNumber()))
+            );
+        }
         //向订单表中插入一个数据
         Order order = new Order();
         order.setUserId(BaseContext.getCurrentId());
         order.setNumber(String.valueOf(System.currentTimeMillis()));
         order.setStatus(1);
-        order.setAmount(orderSubmitDTO.getOrderAmount());
-        order.setDeliveryFee(orderSubmitDTO.getDeliveryFee() == null ? BigDecimal.ZERO : orderSubmitDTO.getDeliveryFee());
+        order.setAmount(dishAmount.add(deliveryFee));
+        order.setDeliveryFee(deliveryFee);
         order.setOrderTime(LocalDateTime.now());
         order.setOrderDeliveryTime(orderSubmitDTO.getOrderDeliveryTime());
         order.setTablewareAmount(orderSubmitDTO.getTablewareAmount() == null ? 0 : orderSubmitDTO.getTablewareAmount());
@@ -123,14 +148,17 @@ public class OrderServiceImpl implements OrderService {
         //通过websocket推送消息
         Map<String, Object> message = new HashMap<>();
         message.put("type", 1);
+        message.put("event", "ORDER_PAID");
+        message.put("status", 2);
         message.put("orderId", order.getId());
         message.put("content", "订单支付成功"+orderNumber);
         String json = JSON.toJSONString(message);
         List<Long> merchantIds =
                 orderDetailMapper.getMerchantIdsByOrderId(order.getId());
         for (Long merchantId : merchantIds) {
-            webSocketServer.sendToMerchant(merchantId, json);
+            webSocketServer.sendToMerchantAfterCommit(merchantId, json);
         }
+        webSocketServer.sendToUserAfterCommit(userId, json);
 
         //封装返回结果
         OrderPaymentVO orderPaymentVO = new OrderPaymentVO();
@@ -151,8 +179,13 @@ public class OrderServiceImpl implements OrderService {
         if (!order.getUserId().equals(userId)) {
             throw new OrderBusinessException(403, "无权限");
         }
+        if (order.getStatus() < Order.PENDING_ACCEPTANCE
+                || order.getStatus() > Order.DELIVERING) {
+            throw new OrderBusinessException(409, "订单当前状态不可催单");
+        }
         Map message = new HashMap();
         message.put("type", 2);
+        message.put("event", "ORDER_REMINDER");
         message.put("orderId", orderId);
         message.put("content", "用户催单，请及时处理");
         String json = JSON.toJSONString(message);
@@ -162,5 +195,52 @@ public class OrderServiceImpl implements OrderService {
         for (Long merchantId : merchantIds) {
             webSocketServer.sendToMerchant(merchantId, json);
         }
+    }
+
+    @Override
+    @Transactional
+    public void cancel(Long orderId) {
+        Order order = orderMapper.getByIdForUpdate(orderId);
+        if (order == null) {
+            throw new OrderBusinessException(404, "订单不存在");
+        }
+        if (!order.getUserId().equals(BaseContext.getCurrentId())) {
+            throw new OrderBusinessException(403, "无权限操作该订单");
+        }
+        if (order.getStatus() != Order.PENDING_PAYMENT
+                && order.getStatus() != Order.PENDING_ACCEPTANCE) {
+            throw new OrderBusinessException(409, "订单当前状态不可取消");
+        }
+        int rows = orderMapper.updateOrderStatusById(
+                orderId, Order.CANCELLED, order.getStatus()
+        );
+        if (rows == 0) {
+            throw new OrderBusinessException(409, "订单状态已发生变化");
+        }
+        order.setStatus(Order.CANCELLED);
+        orderNotificationService.notifyUsers(order, "ORDER_CANCELLED", "订单已取消");
+    }
+
+    @Override
+    @Transactional
+    public void confirmReceipt(Long orderId) {
+        Order order = orderMapper.getByIdForUpdate(orderId);
+        if (order == null) {
+            throw new OrderBusinessException(404, "订单不存在");
+        }
+        if (!order.getUserId().equals(BaseContext.getCurrentId())) {
+            throw new OrderBusinessException(403, "无权限操作该订单");
+        }
+        if (order.getStatus() != Order.PENDING_RECEIPT) {
+            throw new OrderBusinessException(409, "订单当前状态不可确认收餐");
+        }
+        int rows = orderMapper.updateOrderStatusById(
+                orderId, Order.COMPLETED, Order.PENDING_RECEIPT
+        );
+        if (rows == 0) {
+            throw new OrderBusinessException(409, "订单状态已发生变化");
+        }
+        order.setStatus(Order.COMPLETED);
+        orderNotificationService.notifyUsers(order, "ORDER_COMPLETED", "用户已确认收餐，订单完成");
     }
 }

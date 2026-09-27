@@ -60,7 +60,9 @@ public class ReportController {
 
     @GetMapping("/export")
     @Tag(name = "export", description = "导出报表")
-    public void export(HttpServletResponse response) {
-        reportService.exportBusinessData(response);
+    public void export(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+                       @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end,
+                       HttpServletResponse response) {
+        reportService.exportBusinessData(begin, end, response);
     }
 }

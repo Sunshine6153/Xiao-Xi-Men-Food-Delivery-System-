@@ -1,0 +1,29 @@
+<view class="page-shell home-page">
+  <navigation-bar title="小西门外卖系统" back="{{false}}" color="#17324d" background="#ffffff"></navigation-bar>
+  <scroll-view class="main-scroll" scroll-y enhanced show-scrollbar="false">
+    <view class="hero"><view class="search-box"><text class="search-icon">⌕</text><input placeholder="搜索菜品或商户" placeholder-class="search-placeholder" bindinput="onSearchInput" /></view></view>
+    <view class="notice-bar"><text class="notice-dot"></text><text>小西门今日营业中</text><text class="notice-arrow">›</text></view>
+    <view class="menu-layout">
+      <scroll-view class="category-side" scroll-y enhanced show-scrollbar="false">
+        <view wx:for="{{categories}}" wx:key="id" class="category-item {{activeCategory === item.id ? 'category-item-active' : ''}}" data-id="{{item.id}}" bindtap="selectCategory"><text>{{item.name}}</text></view>
+      </scroll-view>
+      <view class="dish-content">
+        <view wx:if="{{loading}}" class="menu-state"><text class="menu-state-title">正在加载菜单</text><text class="menu-state-desc">请稍候...</text></view>
+        <view wx:elif="{{loadError}}" class="menu-state"><text class="menu-state-title">{{loadError}}</text><text class="menu-state-desc">登录后即可查看小西门实时菜单</text><button class="menu-state-button" bindtap="loginAndLoad">微信登录</button></view>
+        <view wx:elif="{{!filteredDishes.length}}" class="menu-state"><text class="menu-state-title">暂无菜品</text><text class="menu-state-desc">当前分类暂时没有上架菜品</text></view>
+        <block wx:else>
+        <view class="section-heading"><text class="section-title">推荐菜品</text><text class="section-more">{{filteredDishes.length}} 道</text></view>
+        <view class="dish-list">
+          <view wx:for="{{filteredDishes}}" wx:key="id" class="dish-card" data-id="{{item.id}}" bindtap="openDish">
+            <image class="dish-image" src="{{item.image}}" mode="aspectFill" />
+            <view class="dish-info"><view class="dish-name-row"><text class="dish-name">{{item.name}}</text><text wx:if="{{item.tag}}" class="dish-tag">{{item.tag}}</text></view><view class="dish-desc">{{item.description}}</view><view class="merchant-line"><text>{{item.merchant}}</text><text class="merchant-location"> · {{item.location}}</text></view><view class="dish-bottom"><view><text class="price-symbol">¥</text><text class="price">{{item.price}}</text><text class="sold"> 已售 {{item.sold}}</text></view><button class="dish-action {{item.flavors && item.flavors.length ? 'spec-button' : 'add-button-text'}}" data-id="{{item.id}}" catchtap="handleDishAction">{{item.flavors && item.flavors.length ? '选择规格' : '加入'}}</button></view></view>
+          </view>
+        </view>
+        </block>
+      </view>
+    </view>
+  </scroll-view>
+  <view wx:if="{{cartCount > 0}}" class="cart-bar" bindtap="openCart"><view class="cart-bubble"><text class="cart-icon">🛒</text><text class="cart-count">{{cartCount}}</text></view><view class="cart-summary"><text class="cart-label">购物车</text><text class="cart-total">¥{{cartTotal}}</text></view><view class="cart-action">去结算 <text>›</text></view></view>
+  <view class="tabbar safe-bottom"><view class="tabbar-item active"><text class="tab-icon">⌂</text><text>点餐</text></view><view class="tabbar-item" bindtap="goDelivery"><text class="tab-icon">⇢</text><text>帮带</text></view><view class="tabbar-item" bindtap="goOrders"><text class="tab-icon">▤</text><text>订单</text></view><view class="tabbar-item" bindtap="goMine"><text class="tab-icon">◯</text><text>我的</text></view></view>
+  <view wx:if="{{selectedDish}}" class="modal-mask" catchtap="closeDish"><view class="dish-modal" catchtap="stopPropagation"><image class="modal-image" src="{{selectedDish.image}}" mode="aspectFill" /><view class="modal-close" bindtap="closeDish">×</view><view class="modal-content"><view class="modal-title-row"><text class="modal-title">{{selectedDish.name}}</text><text class="modal-price">¥{{selectedDish.price}}</text></view><view class="modal-merchant">{{selectedDish.merchant}} · {{selectedDish.location}}</view><view class="modal-desc">{{selectedDish.description}}</view><view class="flavor-title">选择规格</view><view class="flavors"><view wx:for="{{selectedDish.flavors}}" wx:key="*this" class="flavor {{selectedFlavor === item ? 'flavor-active' : ''}}" data-flavor="{{item}}" bindtap="selectFlavor">{{item}}</view></view><view class="modal-bottom"><view><text class="modal-label">合计</text><text class="modal-price">¥{{selectedDish.price}}</text></view><button class="primary-button" bindtap="addToCart">加入购物车</button></view></view></view></view>
+</view>

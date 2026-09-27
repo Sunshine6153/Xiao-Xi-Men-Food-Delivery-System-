@@ -4,6 +4,7 @@ import com.neu.constant.JwtClaimsConstant;
 import com.neu.context.BaseContext;
 import com.neu.exception.UserNotLoginException;
 import com.neu.properties.JwtProperties;
+import com.neu.mapper.UserMapper;
 import com.neu.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -23,6 +24,9 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
     @Autowired
     private JwtProperties jwtProperties;
 
+    @Autowired
+    private UserMapper userMapper;
+
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
         //非动态方法直接放行
         if(!(handler instanceof HandlerMethod)){
@@ -32,9 +36,16 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
         String token = request.getHeader(jwtProperties.getUserTokenName());
 
         try{
-            log.info("开始校验令牌：{}", token);
+            log.info("开始校验用户令牌");
             Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), token);
             Long userId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
+            Integer status = userMapper.getStatus(userId);
+            if (status == null) {
+                throw new UserNotLoginException("账号不存在，请重新登录");
+            }
+            if (status != 1) {
+                throw new UserNotLoginException("账号已被禁用，请联系管理员");
+            }
             request.setAttribute(JwtClaimsConstant.USER_ID, userId);
             BaseContext.setCurrentId(userId);
             log.info("登陆用户ID为：{}", userId);

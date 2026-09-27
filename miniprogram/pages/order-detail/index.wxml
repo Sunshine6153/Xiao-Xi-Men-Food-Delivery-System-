@@ -1,0 +1,59 @@
+<navigation-bar title="订单详情" back="{{true}}" color="#17324d" background="#ffffff"></navigation-bar>
+<view class="page-shell detail-page">
+  <view wx:if="{{loading}}" class="detail-state"><text>正在加载订单详情...</text></view>
+  <view wx:elif="{{errorMessage}}" class="detail-state">
+    <text class="state-title">加载失败</text>
+    <text class="state-copy">{{errorMessage}}</text>
+    <button class="state-button" bindtap="reloadOrder">重新加载</button>
+    <button class="state-button" bindtap="login">微信登录</button>
+  </view>
+  <block wx:else>
+    <view class="status-hero">
+      <view class="status-icon">{{order.status === '已完成' ? '✓' : '·'}}</view>
+      <view class="status-title">{{order.status}}</view>
+      <view class="status-copy">{{mode === 'delivery' ? '这是你正在帮带的订单' : '订单状态会在这里持续更新'}}</view>
+    </view>
+    <view class="timeline-card">
+      <view wx:for="{{steps}}" wx:key="title" class="timeline-step {{item.done ? 'step-done' : ''}} {{item.current ? 'step-current' : ''}}">
+        <view class="step-line"><view class="step-dot"></view></view>
+        <view class="step-content"><text class="step-title">{{item.title}}</text><text class="step-copy">{{item.copy}}</text></view>
+      </view>
+    </view>
+    <view class="detail-card">
+      <view class="detail-card-title">配送信息</view>
+      <view wx:if="{{order.consignee}}" class="detail-row"><text>收货人</text><text>{{order.consignee}} {{order.phone}}</text></view>
+      <view class="detail-row"><text>送到</text><text>{{order.address}}</text></view>
+      <view class="detail-row"><text>帮带费</text><text>¥{{order.fee}}</text></view>
+      <view wx:if="{{order.remark}}" class="detail-row"><text>订单备注</text><text>{{order.remark}}</text></view>
+    </view>
+    <view class="detail-card">
+      <view class="detail-card-title">商品明细</view>
+      <view wx:for="{{order.merchantGroups}}" wx:key="id" class="merchant-block">
+        <view class="merchant-name">{{item.name}}</view>
+        <view class="pickup-location">取餐位置：{{item.location}}</view>
+        <view wx:if="{{order.statusValue >= 3 && order.statusValue <= 6}}" class="preparation-status">{{item.preparationText}}</view>
+        <view wx:for="{{item.dishes}}" wx:for-item="dish" wx:key="id" class="dish-line">
+          <view><text class="dish-name">{{dish.name}}</text><text class="dish-flavor">{{dish.dishFlavor || '默认规格'}}</text></view>
+          <text>×{{dish.number}}</text><text>¥{{dish.subtotal}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="detail-card">
+      <view class="detail-card-title">订单信息</view>
+      <view class="detail-row"><text>订单金额</text><text>¥{{order.total}}</text></view>
+      <view class="detail-row"><text>订单编号</text><text>{{order.orderNumber || order.number || order.id}}</text></view>
+      <view wx:if="{{order.createdAt}}" class="detail-row"><text>下单时间</text><text>{{order.createdAt}}</text></view>
+    </view>
+    <view wx:if="{{mode === 'delivery'}}" class="action-stack">
+      <button disabled="{{processing}}" wx:if="{{order.status === '待接单'}}" class="primary-action" bindtap="acceptDelivery">接取订单</button>
+      <button disabled="{{processing}}" wx:if="{{order.status === '待取餐'}}" class="primary-action" bindtap="startDelivery">开始配送</button>
+      <button disabled="{{processing}}" wx:if="{{order.status === '配送中'}}" class="primary-action" bindtap="deliverOrder">确认送达</button>
+    </view>
+    <view wx:else class="action-stack">
+      <button disabled="{{processing}}" wx:if="{{order.statusValue === 1}}" class="primary-action" bindtap="continuePayment">继续模拟支付</button>
+      <button disabled="{{processing}}" wx:if="{{order.statusValue >= 2 && order.statusValue <= 5}}" class="secondary-action" bindtap="remindOrder">催单</button>
+      <button disabled="{{processing}}" wx:if="{{order.statusValue === 1 || order.statusValue === 2}}" class="secondary-action" bindtap="cancelOrder">取消订单</button>
+      <button disabled="{{processing}}" wx:if="{{order.statusValue === 6}}" class="primary-action" bindtap="confirmReceipt">确认收餐</button>
+    </view>
+  </block>
+</view>

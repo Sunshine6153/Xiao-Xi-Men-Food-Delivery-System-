@@ -11,5 +11,9 @@ public interface ShoppingCartService {
 
     List<ShoppingCart> listShoppingCart();
 
-    void deleteShoppingCartByUserId(Long userId);
+    void updateShoppingCart(ShoppingCartDTO shoppingCartDTO);
+
+    void deleteShoppingCartItem(Long id);
+
+    void deleteShoppingCart();
 }

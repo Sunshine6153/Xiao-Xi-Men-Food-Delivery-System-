@@ -1,0 +1,69 @@
+/* 只统一管理端组件视觉，不改微信小程序样式或业务逻辑。 */
+:root {
+  --el-color-primary: #1766a6;
+  --el-color-primary-light-3: #5d94bd;
+  --el-color-primary-light-5: #8bb3d2;
+  --el-color-primary-light-7: #b9d1e4;
+  --el-color-primary-light-8: #d1e0ed;
+  --el-color-primary-light-9: #edf5fb;
+  --el-color-primary-dark-2: #125285;
+  --el-color-danger: #bd514b;
+  --el-text-color-primary: #20364e;
+  --el-text-color-regular: #506579;
+  --el-text-color-placeholder: #8b99a5;
+  --el-border-color: #d7e1e9;
+  --el-border-color-light: #e4eaf0;
+  --el-border-radius-base: 4px;
+  --el-font-size-base: 13px;
+}
+
+/* 优先于旧页面的 button 样式，避免组件被零散样式覆盖。 */
+.workspace button.el-button.ui-action {
+  min-height: 34px;
+  height: 34px;
+  padding: 8px 14px;
+  margin-left: 0;
+  border: 1px solid var(--el-button-border-color);
+  border-radius: 4px;
+  background: var(--el-button-bg-color);
+  color: var(--el-button-text-color);
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 500;
+}
+.workspace button.el-button.ui-action:hover {
+  border-color: var(--el-button-hover-border-color);
+  background: var(--el-button-hover-bg-color);
+  color: var(--el-button-hover-text-color);
+}
+.workspace button.el-button.ui-action.is-disabled {
+  border-color: var(--el-button-disabled-border-color);
+  background: var(--el-button-disabled-bg-color);
+  color: var(--el-button-disabled-text-color);
+  cursor: not-allowed;
+}
+.workspace button.el-button.ui-action.is-link {
+  min-height: 28px;
+  height: auto;
+  padding: 4px 6px;
+  border: 0;
+  background: transparent;
+}
+.workspace button.el-button.ui-action.danger-link {
+  --el-button-text-color: var(--el-color-danger);
+  --el-button-hover-text-color: #a5403a;
+}
+.workspace .el-input__inner {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.workspace .filter-field .el-input,
+.workspace .filter-field .el-select { width: 100%; }
+.workspace .el-input__wrapper,
+.workspace .el-select__wrapper { min-height: 36px; }
+.workspace .el-radio-group { flex-wrap: wrap; gap: 0; }
+.workspace .el-radio-button__inner { padding: 9px 16px; font-size: 13px; }
+.workspace .el-pagination { flex-wrap: wrap; gap: 4px; }

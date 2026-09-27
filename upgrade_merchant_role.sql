@@ -1,0 +1,3 @@
+-- 对已有数据库执行一次；现有商户自动成为 MERCHANT。
+ALTER TABLE merchant
+    ADD COLUMN role VARCHAR(16) NOT NULL DEFAULT 'MERCHANT';

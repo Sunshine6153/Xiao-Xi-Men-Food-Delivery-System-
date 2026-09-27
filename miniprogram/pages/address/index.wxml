@@ -1,0 +1,24 @@
+<navigation-bar title="地址管理" back="{{true}}" color="#17324d" background="#ffffff"></navigation-bar>
+<view class="page-shell address-page">
+  <view class="address-heading"><view><view class="eyebrow blue">DELIVERY LOCATIONS</view><view class="inner-title">地址管理</view></view><text class="address-count">{{addresses.length}} 个地址</text></view>
+  <view wx:if="{{selecting}}" class="address-hint">点击地址，选为本次订单的配送地址</view>
+  <view wx:if="{{loading}}" class="empty-address">正在加载地址...</view>
+  <view wx:elif="{{error}}" class="empty-address"><text>{{error}}</text><button wx:if="{{needsLogin}}" class="add-address" bindtap="login">微信登录</button><button wx:else class="add-address" bindtap="loadAddresses">重试</button></view>
+  <view wx:elif="{{addresses.length}}" class="address-list">
+    <view wx:for="{{addresses}}" wx:key="id" class="address-card" data-id="{{item.id}}" bindtap="selectAddress">
+      <view class="address-card-main"><view class="address-pin">⌖</view><view><view class="address-text">{{item.address}}</view><view class="address-time">{{item.consignee}} · {{item.phone}}</view></view><text wx:if="{{item.isDefault === 1}}" class="default-tag">默认</text></view>
+      <view class="address-actions"><text data-id="{{item.id}}" catchtap="editAddress">编辑</text><text data-id="{{item.id}}" catchtap="setDefault">{{item.isDefault === 1 ? '已是默认地址' : '设为默认'}}</text><text data-id="{{item.id}}" catchtap="deleteAddress">删除</text></view>
+    </view>
+  </view>
+  <view wx:else class="empty-address"><text class="empty-pin">⌖</text><text>还没有保存配送地址</text></view>
+  <button wx:if="{{!error}}" class="add-address" bindtap="addAddress">＋ 新增配送地址</button>
+  <view wx:if="{{editing}}" class="address-form-mask">
+    <view class="address-form">
+      <view class="address-form-title">{{editId ? '编辑配送地址' : '新增配送地址'}}</view>
+      <view class="address-form-row"><text>收货人</text><input value="{{consignee}}" maxlength="64" placeholder="请输入姓名" bindinput="onConsignee" /></view>
+      <view class="address-form-row"><text>手机号</text><input value="{{phone}}" type="number" maxlength="11" placeholder="请输入11位手机号" bindinput="onPhone" /></view>
+      <view class="address-form-row"><text>详细地址</text><input value="{{address}}" maxlength="256" placeholder="例如：第五宿舍 301" bindinput="onAddress" /></view>
+      <view class="address-form-actions"><button bindtap="cancelEdit">取消</button><button class="address-save" loading="{{saving}}" disabled="{{saving}}" bindtap="saveAddress">保存</button></view>
+    </view>
+  </view>
+</view>

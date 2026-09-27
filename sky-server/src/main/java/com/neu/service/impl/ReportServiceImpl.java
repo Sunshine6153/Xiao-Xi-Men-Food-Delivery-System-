@@ -148,10 +148,8 @@ public class ReportServiceImpl implements ReportService{
         return salesTop10VO;
     }
 
-    public void exportBusinessData(HttpServletResponse response){
+    public void exportBusinessData(LocalDate begin, LocalDate end, HttpServletResponse response){
         //查询业务数据
-        LocalDate begin = LocalDate.now().minusDays(29);
-        LocalDate end = LocalDate.now();
         BusinessDataVO businessDataVO = getBusinessData(begin, end);
 
         //用POI导入数据
@@ -189,9 +187,14 @@ public class ReportServiceImpl implements ReportService{
             }
 
             //通过输出流在浏览器下载文件
-            ServletOutputStream outputStream = response.getOutputStream();
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
+            String fileName = URLEncoder.encode(
+                    "运营数据报表_" + begin + "_" + end + ".xlsx",
+                    StandardCharsets.UTF_8
+            ).replace("+", "%20");
+            response.setHeader("Content-Disposition", "attachment;filename*=utf-8''" + fileName);
+            ServletOutputStream outputStream = response.getOutputStream();
             excel.write(outputStream);
             outputStream.flush();
             outputStream.close();

@@ -1,0 +1,33 @@
+# 复制为 application-dev.yml，或通过环境变量提供下列配置。
+# 本地真实配置不应提交。示例 JWT 默认值仅用于开发，部署时务必替换。
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      database: 0
+      timeout: 3000ms
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:xiaoximen}?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:}
+sky:
+  path:
+    images: ${IMAGE_DIRECTORY:./images/}
+  jwt:
+    admin-secret-key: ${ADMIN_JWT_SECRET:replace-this-admin-key-before-deployment}
+    admin-ttl: 7200000
+    admin-token-name: token
+    user-secret-key: ${USER_JWT_SECRET:replace-this-user-key-before-deployment}
+    user-ttl: 7200000
+    user-token-name: token
+  alioss:
+    endpoint: ${OSS_ENDPOINT:oss-cn-hangzhou.aliyuncs.com}
+    access-key-id: ${OSS_ACCESS_KEY_ID:}
+    access-key-secret: ${OSS_ACCESS_KEY_SECRET:}
+    bucket-name: ${OSS_BUCKET_NAME:}
+    base-path: /
+  wechat:
+    app-id: ${WECHAT_APP_ID:}
+    app-secret: ${WECHAT_APP_SECRET:}

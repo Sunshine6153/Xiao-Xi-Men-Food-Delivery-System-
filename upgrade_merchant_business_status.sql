@@ -1,0 +1,2 @@
+ALTER TABLE merchant
+  ADD COLUMN business_status TINYINT NOT NULL DEFAULT 1 AFTER status;
